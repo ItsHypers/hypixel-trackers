@@ -1,11 +1,13 @@
 import time
 import requests
 import json
- 
+from dhooks import Webhook, Embed
+
+
 j = open('config.json')
 config = json.load(j)
 j.close()
-
+hook = Webhook(config["trackerConfig"]["discord_webhook_url"])
 if(config["trackerConfig"]["key"] == "key"):
     print("please enter your hypixel key into the config.json file! (Read the README)")
     quit()
@@ -62,21 +64,35 @@ def track():
         if(config["trackerConfig"]["collection"] != ""):
             var0=a["profile"]["members"][playerUUID]["collection"][collection]
 
-            print ("Total " + config["trackerConfig"]["collection"].upper() + " Collection for " + config["trackerConfig"]["player"]["ign"] +" at ", time.strftime("%Y-%m-%d %H:%M"),": ",f"{var0:,}")
-            print (config["trackerConfig"]["collection"].upper() + " Gained Since start of program: ",var0-before0)
-            print (config["trackerConfig"]["collection"].upper() + " Gained Since Last request: ",var0-recentCollection)
-            print("Estimated " + config["trackerConfig"]["collection"].upper() + " Collection an hour : " + str(3600 // config["trackerConfig"]["cooldown"] * (var0-recentCollection)))
-            print ("")
+            embed = Embed(
+            description=config["trackerConfig"]["collection"].upper() + " Collection Tracker",
+            color=0x5CDBF0,
+            timestamp='now'  # sets the timestamp to current time
+            )
+            embed.set_author(name=config["trackerConfig"]["player"]["ign"])
+            embed.add_field(name=config["trackerConfig"]["collection"].upper() + " Collection", value=str(f"{var0:,}") + ' :open_mouth:')
+            embed.add_field(name='Since start of session', value=str(f"{var0-before0:,}"))
+            embed.add_field(name='Since Last request', value= str(f"{var0-recentCollection:,}"))
+            hourlyestimate = 3600 // config["trackerConfig"]["cooldown"] * (var0-recentCollection)
+            embed.add_field(name='Estimated Per Hour', value=str(f"{hourlyestimate:,}"))
+
+            hook.send(embed=embed)
         if(config["trackerConfig"]["skill"] != ""):
             mxp0=a["profile"]["members"][playerUUID]["experience_skill_" + config["trackerConfig"]["skill"]]
 
-            print ("Total " + config["trackerConfig"]["skill"] + " XP for "+ config["trackerConfig"]["player"]["ign"] +" at ",time.strftime("%Y-%m-%d %H:%M"),": ", f"{round(mxp0, 2):,}")
-            print (config["trackerConfig"]["skill"] +" XP Gained since start of program: ", round(mxp0-mxpBefore0, 2))
-            print (config["trackerConfig"]["skill"] +" XP Gained since last request: ",round(mxp0-lastmxpAmount0, 2))
-            print("Estimated " + config["trackerConfig"]["skill"] + " XP an hour : " + str(3600 // config["trackerConfig"]["cooldown"] * (round(mxp0-lastmxpAmount0, 2))))
-            print ("")
-        #Process player 0 data
-        print ("-------------------------")
+            embed = Embed(
+            description=config["trackerConfig"]["skill"] + " Skill Tracker",
+            color=0x5CDBF0,
+            timestamp='now'  # sets the timestamp to current time
+            )
+            embed.set_author(name=config["trackerConfig"]["player"]["ign"])
+            embed.add_field(name=config["trackerConfig"]["skill"] + " Skill Total", value=str(f"{round(mxp0, 2):,}") + ' :open_mouth:')
+            embed.add_field(name='Since start of session', value=str(f"{round(mxp0-mxpBefore0, 2):,}"))
+            embed.add_field(name='Since Last request', value=str(f"{round(mxp0-lastmxpAmount0, 2):,}"))
+            hourlyestimate = 3600 // config["trackerConfig"]["cooldown"] * (round(mxp0-lastmxpAmount0, 2))
+            embed.add_field(name='Estimated Per Hour', value=str(f"{hourlyestimate:,}"))
+
+            hook.send(embed=embed)
  
         #Sleep for a reasonable time untill new API data is available (3-4 minutes)
         time.sleep(config["trackerConfig"]["cooldown"])

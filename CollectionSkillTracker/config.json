@@ -6,5 +6,6 @@
     },
     "collection": "",
     "skill": "",
-    "cooldown": 100
+    "cooldown": 120,
+    "discord_webhook_url": ""
 }}    
