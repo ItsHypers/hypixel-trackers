@@ -54,28 +54,32 @@ def track():
     if(config["trackerConfig"]["skill"] != ""):
         mxpBefore0=a["profile"]["members"][playerUUID]["experience_skill_" + config["trackerConfig"]["skill"]]
     while(True):
-        a=playerAPI()
         if(config["trackerConfig"]["collection"] != ""):
             recentCollection=a["profile"]["members"][playerUUID]["collection"][collection]
+        if(config["trackerConfig"]["skill"] != ""):
+            lastmxpAmount0=a["profile"]["members"][playerUUID]["experience_skill_" + config["trackerConfig"]["skill"]]
+        a=playerAPI()
+        if(config["trackerConfig"]["collection"] != ""):
             var0=a["profile"]["members"][playerUUID]["collection"][collection]
 
             print ("Total " + config["trackerConfig"]["collection"].upper() + " Collection for " + config["trackerConfig"]["player"]["ign"] +" at ", time.strftime("%Y-%m-%d %H:%M"),": ",f"{var0:,}")
             print (config["trackerConfig"]["collection"].upper() + " Gained Since start of program: ",var0-before0)
             print (config["trackerConfig"]["collection"].upper() + " Gained Since Last request: ",var0-recentCollection)
+            print("Estimated " + config["trackerConfig"]["collection"].upper() + " Collection an hour : " + str(3600 // config["trackerConfig"]["cooldown"] * (var0-recentCollection)))
             print ("")
         if(config["trackerConfig"]["skill"] != ""):
-            lastmxpAmount0=a["profile"]["members"][playerUUID]["experience_skill_" + config["trackerConfig"]["skill"]]
             mxp0=a["profile"]["members"][playerUUID]["experience_skill_" + config["trackerConfig"]["skill"]]
 
             print ("Total " + config["trackerConfig"]["skill"] + " XP for "+ config["trackerConfig"]["player"]["ign"] +" at ",time.strftime("%Y-%m-%d %H:%M"),": ", f"{round(mxp0, 2):,}")
             print (config["trackerConfig"]["skill"] +" XP Gained since start of program: ", round(mxp0-mxpBefore0, 2))
             print (config["trackerConfig"]["skill"] +" XP Gained since last request: ",round(mxp0-lastmxpAmount0, 2))
+            print("Estimated " + config["trackerConfig"]["skill"] + " XP an hour : " + str(3600 // config["trackerConfig"]["cooldown"] * (round(mxp0-lastmxpAmount0, 2))))
             print ("")
         #Process player 0 data
         print ("-------------------------")
  
         #Sleep for a reasonable time untill new API data is available (3-4 minutes)
-        time.sleep(180)
+        time.sleep(config["trackerConfig"]["cooldown"])
  
 track()
 

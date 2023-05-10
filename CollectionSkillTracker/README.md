@@ -34,6 +34,8 @@ tracker.py
 
 - change the skill to your selected skill
 
+- Change the cooldown to what you want (in seconds) (anything above 100 is recommended)
+
 If you dont want to track a collection, leave it blank.
 If you dont want to track a skill, leave it blank.
 
