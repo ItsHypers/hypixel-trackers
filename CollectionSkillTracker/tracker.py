@@ -90,7 +90,7 @@ def track():
             embed.add_field(name='Since start of session', value=str(f"{round(mxp0-mxpBefore0, 2):,}"))
             embed.add_field(name='Since Last request', value=str(f"{round(mxp0-lastmxpAmount0, 2):,}"))
             hourlyestimate = 3600 // config["trackerConfig"]["cooldown"] * (round(mxp0-lastmxpAmount0, 2))
-            embed.add_field(name='Estimated Per Hour', value=str(f"{hourlyestimate:,}"))
+            embed.add_field(name='Estimated Per Hour', value=str(f"{round(hourlyestimate, 2):,}"))
 
             hook.send(embed=embed)
  
